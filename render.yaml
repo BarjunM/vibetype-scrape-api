@@ -3,12 +3,10 @@ services:
     name: vibetype-scrape-api
     env: python
     plan: free
-    buildCommand: pip install -r requirements-simple.txt
-    startCommand: uvicorn main_simple:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
-      - key: PYTHON_VERSION
-        value: 3.11.7
       - key: OPENAI_API_KEY
-        sync: false  # This will be set manually in Render dashboard
-    healthCheckPath: /health
-    autoDeploy: true 
+        sync: false
+      - key: PYTHON_VERSION
+        value: 3.9.16 

@@ -1,201 +1,205 @@
-# Deployment Guide for Web Content Parser API
+# API Deployment Guide
 
-This guide will help you deploy your API to various hosting platforms. Choose the option that best fits your needs.
+This guide covers multiple hosting options for your Web Content Parser & QA Assistant API.
 
-## Prerequisites
+## 🚀 Quick Start - Render (Recommended)
 
-1. **OpenAI API Key**: You'll need an OpenAI API key for the semantic search functionality
-2. **Git Repository**: Your code should be in a Git repository (GitHub, GitLab, etc.)
-
-## Option 1: Railway (Recommended - Easiest)
-
-### Step 1: Sign Up
-1. Go to [railway.app](https://railway.app)
-2. Sign up with your GitHub account
-
-### Step 2: Deploy
-1. Click "New Project"
-2. Select "Deploy from GitHub repo"
-3. Choose your repository
-4. Railway will automatically detect it's a Python app
-
-### Step 3: Configure Environment Variables
-1. Go to your project dashboard
-2. Click on "Variables" tab
-3. Add your environment variables:
-   ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
-
-### Step 4: Deploy
-1. Railway will automatically deploy your app
-2. Your API will be available at: `https://your-app-name.railway.app`
-
-## Option 2: Render (Free Tier Available)
-
-### Step 1: Sign Up
-1. Go to [render.com](https://render.com)
-2. Sign up with your GitHub account
-
-### Step 2: Deploy
-1. Click "New +" → "Web Service"
-2. Connect your GitHub repository
-3. Configure the service:
-   - **Name**: `vibetype-scrape-api`
-   - **Environment**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn main:app --host 0.0.0.0 --port $PORT`
-
-### Step 3: Configure Environment Variables
-1. In your service settings, go to "Environment"
-2. Add your environment variables:
-   ```
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
-
-### Step 4: Deploy
-1. Click "Create Web Service"
-2. Your API will be available at: `https://your-app-name.onrender.com`
-
-## Option 3: Heroku
-
-### Step 1: Install Heroku CLI
+### Step 1: Prepare Your Repository
 ```bash
-# Windows
-# Download from: https://devcenter.heroku.com/articles/heroku-cli
-
-# Or use winget
-winget install --id=Heroku.HerokuCLI
-```
-
-### Step 2: Login and Deploy
-```bash
-# Login to Heroku
-heroku login
-
-# Create a new Heroku app
-heroku create your-app-name
-
-# Add your code to Heroku
+# Make sure all changes are committed
 git add .
-git commit -m "Initial deployment"
-git push heroku main
-
-# Set environment variables
-heroku config:set OPENAI_API_KEY=your_openai_api_key_here
-
-# Open your app
-heroku open
+git commit -m "Prepare for deployment"
+git push origin main
 ```
 
-## Option 4: Google Cloud Run (Serverless)
+### Step 2: Deploy to Render
+1. Go to [render.com](https://render.com) and sign up
+2. Click "New +" → "Web Service"
+3. Connect your GitHub repository
+4. Configure the service:
+   - **Name:** `vibetype-scrape-api`
+   - **Environment:** Python 3
+   - **Build Command:** `pip install -r requirements.txt`
+   - **Start Command:** `uvicorn main:app --host 0.0.0.0 --port $PORT`
+   - **Plan:** Free
 
-### Step 1: Install Google Cloud CLI
+5. Add Environment Variables:
+   - **Key:** `OPENAI_API_KEY`
+   - **Value:** Your OpenAI API key
+
+6. Click "Create Web Service"
+
+### Step 3: Test Your Deployment
 ```bash
-# Download from: https://cloud.google.com/sdk/docs/install
+python test_deployment.py https://your-app-name.onrender.com
 ```
 
-### Step 2: Setup and Deploy
+## 🌐 Alternative Hosting Options
+
+### Railway (Fast & Reliable)
+**Cost:** $5/month (no free tier)
+
+1. Go to [railway.app](https://railway.app)
+2. Sign up with GitHub
+3. Click "New Project" → "Deploy from GitHub repo"
+4. Select your repository
+5. Add environment variable: `OPENAI_API_KEY`
+6. Deploy!
+
+### Heroku (Classic Choice)
+**Cost:** $7/month (no free tier)
+
+1. Install Heroku CLI
+2. Create app: `heroku create your-app-name`
+3. Set environment variable: `heroku config:set OPENAI_API_KEY=your_key`
+4. Deploy: `git push heroku main`
+
+### DigitalOcean App Platform
+**Cost:** $5/month (no free tier)
+
+1. Go to [digitalocean.com](https://digitalocean.com)
+2. Create App Platform
+3. Connect GitHub repository
+4. Configure Python environment
+5. Add environment variables
+6. Deploy!
+
+### Google Cloud Run (Most Scalable)
+**Cost:** Pay-per-use
+
+1. Install Google Cloud CLI
+2. Create project and enable Cloud Run
+3. Build and deploy:
 ```bash
-# Login to Google Cloud
-gcloud auth login
-
-# Set your project
-gcloud config set project YOUR_PROJECT_ID
-
-# Build and deploy
 gcloud run deploy vibetype-scrape-api \
   --source . \
   --platform managed \
   --region us-central1 \
   --allow-unauthenticated \
-  --set-env-vars OPENAI_API_KEY=your_openai_api_key_here
+  --set-env-vars OPENAI_API_KEY=your_key
 ```
 
-## Option 5: DigitalOcean App Platform
+## 🔧 Environment Variables
 
-### Step 1: Create App
-1. Go to [DigitalOcean App Platform](https://cloud.digitalocean.com/apps)
-2. Click "Create App"
-3. Connect your GitHub repository
+All deployments require:
+- `OPENAI_API_KEY`: Your OpenAI API key
 
-### Step 2: Configure
-1. Select "Python" as the environment
-2. Set build command: `pip install -r requirements.txt`
-3. Set run command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
+Optional:
+- `EMBEDDING_MODEL`: Defaults to `text-embedding-3-small`
+- `API_HOST`: Defaults to `0.0.0.0`
+- `API_PORT`: Defaults to `8000` (Render uses `$PORT`)
 
-### Step 3: Add Environment Variables
-1. Add your `OPENAI_API_KEY` in the environment variables section
+## 📊 Performance Considerations
 
-### Step 4: Deploy
-1. Click "Create Resources"
-2. Your API will be available at the provided URL
+### Free Tier Limitations
+- **Render Free:** Sleeps after 15 min inactivity, 750 hours/month
+- **Railway:** No free tier, $5/month
+- **Heroku:** No free tier, $7/month
 
-## Testing Your Deployed API
+### Scaling Options
+- **Render:** Upgrade to paid plan ($7/month)
+- **Railway:** Automatic scaling included
+- **Google Cloud Run:** Automatic scaling, pay-per-use
 
-Once deployed, test your API using the provided test script:
+## 🧪 Testing Your Deployment
 
+### Automated Testing
 ```bash
-# Update the URL in test_api.py to your deployed URL
-python test_api.py
+python test_deployment.py https://your-app-url.com
 ```
 
-Or test manually with curl:
-
+### Manual Testing
 ```bash
-curl -X POST "https://your-app-url.com/process" \
-     -H "Content-Type: application/json" \
-     -d '{
-       "html": "<html><body><h1>Test</h1><p>This is a test.</p></body></html>",
-       "query": "What is this about?"
-     }'
+# Health check
+curl https://your-app-url.com/health
+
+# Process content
+curl -X POST https://your-app-url.com/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "html": "<h1>Test</h1><p>This is a test.</p>",
+    "query": "What is this about?",
+    "chunk_size": 500,
+    "top_k": 2
+  }'
 ```
 
-## Environment Variables
+### API Documentation
+Visit `https://your-app-url.com/docs` for interactive API documentation.
 
-Make sure to set these environment variables on your hosting platform:
+## 🔒 Security Considerations
 
-- `OPENAI_API_KEY`: Your OpenAI API key (required for semantic search)
-- `EMBEDDING_MODEL`: Optional, defaults to `text-embedding-3-small`
-- `API_HOST`: Optional, defaults to `0.0.0.0`
-- `API_PORT`: Optional, defaults to `8000` (set by hosting platform)
+1. **API Key Security:**
+   - Never commit API keys to git
+   - Use environment variables
+   - Rotate keys regularly
 
-## Troubleshooting
+2. **Rate Limiting:**
+   - Consider adding rate limiting for production
+   - Monitor OpenAI API usage
 
-### Common Issues:
+3. **CORS:**
+   - Configure CORS for your frontend domain
+   - Current setup allows all origins (development only)
 
-1. **Import Errors**: Make sure all dependencies are in `requirements.txt`
-2. **Port Issues**: Most platforms set `$PORT` environment variable automatically
-3. **Memory Issues**: If you get memory errors, consider upgrading your plan
-4. **Cold Starts**: Render free tier has cold starts - first request may be slow
+## 📈 Monitoring & Logs
 
-### Debugging:
+### Render
+- View logs in Render dashboard
+- Set up alerts for errors
 
-1. Check your platform's logs for error messages
-2. Test locally first: `python main.py`
-3. Verify your OpenAI API key is working
-4. Check that all files are committed to your repository
+### Railway
+- Real-time logs in dashboard
+- Built-in monitoring
 
-## Cost Considerations
+### Heroku
+```bash
+heroku logs --tail
+```
 
-- **Railway**: $5/month after free tier
-- **Render**: Free tier available, then $7/month
-- **Heroku**: $7/month minimum
-- **Google Cloud Run**: Pay-per-use (very cheap for low traffic)
-- **DigitalOcean**: $5/month minimum
+## 🚨 Troubleshooting
 
-## Security Notes
+### Common Issues
 
-1. Never commit your API keys to version control
-2. Use environment variables for sensitive data
-3. Consider adding rate limiting for production use
-4. Monitor your OpenAI API usage to control costs
+1. **Build Fails:**
+   - Check Python version compatibility
+   - Verify all dependencies in requirements.txt
 
-## Next Steps
+2. **Runtime Errors:**
+   - Check environment variables
+   - Verify OpenAI API key is valid
 
-After deployment:
-1. Test all endpoints thoroughly
-2. Set up monitoring and logging
-3. Consider adding authentication if needed
-4. Set up a custom domain if desired
-5. Configure automatic deployments from your Git repository 
+3. **Cold Starts (Render Free):**
+   - First request may take 10-30 seconds
+   - Consider upgrading to paid plan
+
+4. **Memory Issues:**
+   - Monitor memory usage
+   - Optimize chunk sizes if needed
+
+### Debug Commands
+```bash
+# Test locally first
+python main.py
+
+# Check dependencies
+pip list
+
+# Test OpenAI connection
+python -c "import openai; print('OpenAI OK')"
+```
+
+## 📞 Support
+
+- **Render:** [docs.render.com](https://docs.render.com)
+- **Railway:** [docs.railway.app](https://docs.railway.app)
+- **Heroku:** [devcenter.heroku.com](https://devcenter.heroku.com)
+- **OpenAI:** [platform.openai.com](https://platform.openai.com)
+
+## 🎯 Next Steps
+
+1. Deploy to your chosen platform
+2. Test the deployment
+3. Set up monitoring
+4. Configure custom domain (optional)
+5. Set up CI/CD for automatic deployments 
