@@ -1,19 +1,20 @@
-# Core API - updated for Python 3.13 compatibility
-fastapi==0.104.1
-uvicorn==0.24.0
-pydantic==2.5.0
+# Core API - only essential packages
+fastapi
+uvicorn
+pydantic
+python-dotenv
 
-# HTML processing
-html2text==2020.1.16
-requests==2.31.0
+# HTML Processing
+readability-lxml
+html2text
 
-# OpenAI
-openai==1.3.7
+# Semantic Search
+openai
+tiktoken
+scikit-learn
+numpy
 
-# Additional dependencies for semantic search
-numpy==1.24.3
-scikit-learn==1.3.2
-tiktoken==0.5.2
-readability-lxml==0.8.1
+# Added for broader compatibility
+requests
 
 # Keep packages to absolute minimum
