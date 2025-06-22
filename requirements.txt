@@ -11,7 +11,6 @@ html2text
 # Semantic Search
 openai
 tiktoken
-scikit-learn
 numpy
 
 # Added for broader compatibility

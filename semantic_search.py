@@ -4,9 +4,20 @@ Semantic Search - Finds most relevant chunks using embeddings
 import os
 from typing import List, Dict, Any, Optional, Tuple
 import numpy as np
-from sklearn.metrics.pairwise import cosine_similarity
 import openai
 import json
+
+
+def _cosine_similarity(v1: np.ndarray, v2: np.ndarray) -> float:
+    """Calculate cosine similarity between two vectors."""
+    dot_product = np.dot(v1, v2)
+    norm_v1 = np.linalg.norm(v1)
+    norm_v2 = np.linalg.norm(v2)
+    
+    if norm_v1 == 0 or norm_v2 == 0:
+        return 0.0
+        
+    return dot_product / (norm_v1 * norm_v2)
 
 
 class SemanticSearcher:
@@ -118,15 +129,15 @@ class SemanticSearcher:
         if not query_embedding:
             return []
         
+        query_vector = np.array(query_embedding)
+        
         # Calculate similarities
         similarities = []
         for chunk in chunks:
             chunk_embedding = chunk.get('embedding', [])
             if chunk_embedding:
-                similarity = cosine_similarity(
-                    [query_embedding], 
-                    [chunk_embedding]
-                )[0][0]
+                chunk_vector = np.array(chunk_embedding)
+                similarity = _cosine_similarity(query_vector, chunk_vector)
                 similarities.append((chunk, similarity))
         
         # Sort by similarity and return top-k
